@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-        DOCKER_IMAGE = 'tomcat'
-        DOCKER_TAG = "${env.BUILD_ID}"
-    }
-
     stages {
         stage('Checkout') {
              steps {
@@ -22,8 +16,8 @@ pipeline {
                 script {
                     echo 'Running Docker container...'
 
-                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
-                    sh "docker run -d -p 8082:8080 ${DOCKER_IMAGE}:latest"
+                    sh "docker build -t tomcat:v1 ."
+                    sh "docker run -p 8082:8080 tomcat:v1"
                 }
             }
         }
