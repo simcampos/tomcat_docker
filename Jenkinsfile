@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running Docker container...'
-                    sh "docker stop ${DOCKER_IMAGE} || true"
+
                     sh "docker build -t ${DOCKER_IMAGE}:latest ."
                     sh "docker run -d -p 8082:8080 ${DOCKER_IMAGE}:latest"
                 }
