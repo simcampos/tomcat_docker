@@ -22,8 +22,8 @@ pipeline {
                 script {
                     echo 'Running Docker container...'
 
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                    sh "docker run -d -p 8082:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                    sh "docker run -d -p 8082:8080 ${DOCKER_IMAGE}:latest"
                 }
             }
         }
