@@ -1,20 +1,17 @@
 pipeline {
     agent any
 
-
     environment {
-            DOCKER_IMAGE = "tomcat_docker:v1"
-            GIT_REPO = "https://github.com/simcampos/tomcat_docker.git"
-        }
-
+        DOCKER_IMAGE = "tomcat_docker:v1"
+        GIT_REPO = "https://github.com/simcampos/tomcat_docker.git"
+    }
 
     stages {
-        stage('clone repository') {
-             steps {
-                 echo 'Checking out code from the repository'
-                 git branch: 'main', url: "${env.GIT_REPO}"
-
-               }
+        stage('Clone Repository') {
+            steps {
+                // Clone the GitHub repository
+                git url: "${env.GIT_REPO}"
+            }
         }
 
         stage('Build Docker Image') {
@@ -26,15 +23,20 @@ pipeline {
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
                 script {
-                    echo 'Running Docker container...'
-                    docker.image("${env.DOCKER_IMAGE}").inside {
-                        sh 'docker run -d -p 8080:8080 ${env.DOCKER_IMAGE}'
+                    // Run the Docker container
+                    sh 'docker run -d -p 8080:8080 ${env.DOCKER_IMAGE}'
                 }
             }
         }
     }
+
+    post {
+        always {
+            // Clean up after the build
+            cleanWs()
+        }
     }
 }
