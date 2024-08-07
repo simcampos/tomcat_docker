@@ -7,12 +7,14 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                // Clone the GitHub repository
-                git url: "${env.GIT_REPO}"
+        stage('clone repository') {
+           steps {
+                echo 'Checking out code from the repository'
+                git branch: 'main', url: "${env.GIT_REPO}"
+
+                }
             }
-        }
+
 
         stage('Build Docker Image') {
             steps {
