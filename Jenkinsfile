@@ -36,11 +36,4 @@ pipeline {
             }
         }
     }
-
-    post {
-            always {
-                // Clean up after the build
-                cleanWs()
-            }
-        }
 }
