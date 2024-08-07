@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image using the provided Dockerfile
-                    def app = docker.build("${env.DOCKER_IMAGE}", ".")
+                    docker.build("${env.DOCKER_IMAGE}", ".")
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Run the Docker container
-                    sh 'docker run -p 8082:8080 ${env.DOCKER_IMAGE}'
+                    sh 'docker run -p 8082:8080 ${DOCKER_IMAGE}'
                 }
             }
         }
