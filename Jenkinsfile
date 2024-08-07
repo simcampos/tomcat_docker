@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "tomcat_docker:v1"
+        DOCKER_IMAGE = "tomcat_docker"
         GIT_REPO = "https://github.com/simcampos/tomcat_docker.git"
+        DOCKER_TAG = "${env.BUILD_ID}"
     }
 
     stages {
@@ -20,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image using the provided Dockerfile
-                    docker.build("${env.DOCKER_IMAGE}", ".")
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", ".")
                 }
             }
         }
@@ -29,7 +30,7 @@ pipeline {
             steps {
                 script {
                     // Run the Docker container
-                    sh 'docker run -d -p 8082:8080 ${DOCKER_IMAGE}'
+                    sh 'docker run -d -p 8082:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}'
                 }
             }
         }
