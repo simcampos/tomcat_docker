@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Run the Docker container
-                    sh 'docker run -p 8082:8080 ${DOCKER_IMAGE}'
+                    sh 'docker run -d -p 8082:8080 ${DOCKER_IMAGE}'
                 }
             }
         }
