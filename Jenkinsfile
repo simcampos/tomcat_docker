@@ -20,7 +20,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image using the provided Dockerfile
                     docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", ".")
                 }
             }
@@ -29,7 +28,6 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the Docker container
                     sh 'docker run -d -p 8082:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}'
                 }
             }
@@ -38,7 +36,6 @@ pipeline {
 
     post {
         always {
-            // Clean up after the build
             cleanWs()
         }
     }
