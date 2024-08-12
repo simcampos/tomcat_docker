@@ -78,14 +78,13 @@
            scheme="https"
            secure="true"
            SSLEnabled="true"
-           sslProtocol="TLS"
-           clientAuth="false"
            maxParameterCount="1000">
     <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
     <SSLHostConfig>
-        <Certificate	certificateKeyFile="conf/localhost.key"
-                      certificateFile="conf/localhost.pem"
-                      type="RSA" />
+        <Certificate certificateKeystoreFile="conf/localhost.jks"
+                     certificateKeystorePassword="tomcat"
+                     certificateKeystoreType="JKS"
+                     type="RSA" />
     </SSLHostConfig>
 </Connector>
 

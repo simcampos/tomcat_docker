@@ -1,4 +1,16 @@
 This project needs the war files on same folder as the dockerfile.
+The project is still giving bad connection error, but the war files are being deployed. I is a certificates problem or a tomcat server.xml configuration problem.
+
+## Actions
+
+1. create a docker file
+2. create a tomcat-users.xml file
+3. create a context.xml file
+4. create a server.xml file (it can be copied from the docker container after a first run)
+5. create a keystore file (it can be created using keytool or openssl)
+6. create a jenkins pipeline to automate the deployment of the docker container
+
+
 The docker file:
 ``` dockerfile
 FROM tomcat:10.0.0-M7-jdk11-openjdk-slim
@@ -27,7 +39,7 @@ CMD ["catalina.sh", "run"]
 
 comnands to run the docker:
 ``` docker build -t tomcat:v1 .    ```
-``` docker run -d -p 8082:8080 tomcat:v1  ```
+``` docker run -d -p 8082:8080 -p 8443:8443 tomcat:v1  ```
 
 Command to explore running docker:
 ``` docker exec -it [CONTAINER ID] /bin/bash  ```
@@ -53,21 +65,26 @@ openssl req -x509 -newkey rsa:2048 -keyout localhost.key -out localhost.pem -day
 
 Scrite to add to server.xml file to enable https:
 ``` xml
+<Connector port="8080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           redirectPort="8443"
+           maxParameterCount="1000" />
+
 <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
            maxThreads="150"
            scheme="https"
            secure="true"
            SSLEnabled="true"
-           sslProtocol="TLS"
-           clientAuth="false"
            maxParameterCount="1000">
     <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
     <SSLHostConfig>
-        <Certificate	certificateKeyFile="conf/localhost.key"
-                      certificateFile="conf/localhost.pem"
-                      type="RSA" />
+        <Certificate certificateKeystoreFile="conf/localhost.jks"
+                     certificateKeystorePassword="tomcat"
+                     certificateKeystoreType="JKS"
+                     type="RSA" />
     </SSLHostConfig>
 </Connector>
+
 ````
 
 To automate the deployment of the docker container, we used a jenkins pipeline.
@@ -118,6 +135,26 @@ pipeline {
 }
 ```
 
+the certificate must be added added to the windows trust store to avoid the browser warning.
+to convert the certificate to cer file:
+``` bash
+keytool -exportcert -alias tomcat -keystore localhost.jks -rfc -file localhost.cer -storepass tomcat
+```
+
+to change the version of the certificate if needed:
+``` bash
+keytool -importkeystore -srckeystore localhost.jks -srcstoretype pkcs12 -srcstorepass tomcat -destkeystore localhost.jks -deststoretype jks -deststorepass tomcat
+```
+
+To add the certificate to the windows trust store:
+``` bash
+keytool -import -alias tomcat -file localhost.cer -keystore "C:\Program Files\Java\jdk-11.0.11\lib\security\cacerts" -storepass changeit
+```
+
+to test the curl command:
+``` bash
+curl -k https://localhost:8443/
+```
 
 
 
